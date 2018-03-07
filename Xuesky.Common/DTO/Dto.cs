@@ -6,7 +6,9 @@ using Xuesky.Common.Models;
 namespace Xuesky.Common.DTO
 {
 
-
+    /// <summary>
+    /// 数据传办理类
+    /// </summary>
     public class Dto
     {
         public const string MsgDemo1 = "<xml><ToUserName><![CDATA[gh_a413ed7b46b6]]></ToUserName>" +
