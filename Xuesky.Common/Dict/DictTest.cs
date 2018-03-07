@@ -19,6 +19,7 @@ namespace Xuesky.Common.Dict
             //方式二
             var dict = new Dictionary<string, string>
             {
+                {"sss","1122300" },
                 {"app_id", "123"},
                 {"method", "alipay.system.oauth.token"},
                 {"charset", "GBK"},
