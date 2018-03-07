@@ -7,7 +7,8 @@ namespace Xuesky.Common.DTO
 {
 
     /// <summary>
-    /// 数据传办理类
+    /// 数据传办理类  
+    /// 怎么同步不上去呢    
     /// </summary>
     public class Dto
     {
