@@ -14,7 +14,7 @@ namespace Xuesky.Common.Models
 
         public void Call()
         {
-            Console.WriteLine("动物吼叫");
+            Console.WriteLine("动物吼叫aaaaaaaaaaaaaaaaaaa");
         }
         public abstract void Hello(string Name = null);
         public abstract void Eat();
