@@ -5,6 +5,8 @@ using Xuesky.Common.Models;
 
 namespace Xuesky.Common.DTO
 {
+
+
     public class Dto
     {
         public const string MsgDemo1 = "<xml><ToUserName><![CDATA[gh_a413ed7b46b6]]></ToUserName>" +
@@ -14,11 +16,15 @@ namespace Xuesky.Common.DTO
                                "<Content><![CDATA[this is client msg]]></Content>" +
                                "<MsgId>6039496236316578696</MsgId>" +
                                "</xml>";
+        /// <summary>
+        /// 数据传输对象测试
+        /// </summary>
         public void DtoTest()
         {
             Console.WriteLine("******************************使用ValueInjecter实现值注入*******************************************");
             Omu.ValueInjecter.Mapper.AddMap<Student, StudentDto>(src =>
             {
+                var name = "test";
                 var dto = new StudentDto
                 {
                     id = src.id,
