@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using Xuesky.Common.Configuration;
 using Xuesky.Common.DTO;
 using Xuesky.Common.Enums;
 using Xuesky.Common.IOAndStream;
+using Xuesky.Common.JWT;
 using Xuesky.Common.Lamda;
 using Xuesky.Common.Models;
 using Xuesky.Common.ToInterface;
@@ -20,6 +22,8 @@ namespace Xuesky.Common
     {
         private static void Main(string[] args)
         {
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
             System.Console.WriteLine(DateTimeOffset.Now);
             string test = "|||||";
             string[] arrStrings = test.Split('|');
@@ -64,7 +68,14 @@ namespace Xuesky.Common
             var dt = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd 00:00:00"));
 
             var enumTest = new EnumTest();
+            
+
+            Console.WriteLine($"Token值为:{CreateToken.GetToken("xuesky", "123456", "admin")}");
+
             Console.ReadLine();
+            watch.Stop();
+
+            Console.WriteLine($"执行时间为:{watch.ElapsedMilliseconds}ms");
         }
         private static string XmlSerialize(object o)
         {

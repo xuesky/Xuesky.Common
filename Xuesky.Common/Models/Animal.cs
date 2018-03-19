@@ -1,5 +1,4 @@
 ﻿using System;
-
 namespace Xuesky.Common.Models
 {
     /// <summary>
