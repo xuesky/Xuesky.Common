@@ -20,6 +20,7 @@ namespace Xuesky.Common
     {
         private static void Main(string[] args)
         {
+            System.Console.WriteLine(DateTimeOffset.Now);
             string test = "|||||";
             string[] arrStrings = test.Split('|');
             Console.WriteLine(arrStrings[0]);
