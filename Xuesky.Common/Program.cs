@@ -72,10 +72,10 @@ namespace Xuesky.Common
 
             Console.WriteLine($"Token值为:{CreateToken.GetToken("xuesky", "123456", "admin")}");
 
-            Console.ReadLine();
             watch.Stop();
 
             Console.WriteLine($"执行时间为:{watch.ElapsedMilliseconds}ms");
+            Console.ReadLine();
         }
         private static string XmlSerialize(object o)
         {
