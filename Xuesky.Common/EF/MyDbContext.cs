@@ -8,13 +8,10 @@ namespace Xuesky.Common.EF
   {
     ILogger<ContextNameContext> _logger;
 
-    public ContextNameContext(DbContextOptions<ContextNameContext> options, ILogger<ContextNameContext> logger)
-      : base(options)
-    {
-      _logger = logger;
-    }
+        public ContextNameContext(DbContextOptions<ContextNameContext> options, ILogger<ContextNameContext> logger)
+          : base(options) => _logger = logger;
 
-      public DbSet<Blog> Blogs { get; set; }
+        public DbSet<Blog> Blogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
     {

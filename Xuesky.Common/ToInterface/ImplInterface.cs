@@ -7,8 +7,8 @@ using Xuesky.Common.Models;
 namespace Xuesky.Common.ToInterface
 {
    public class ImplInterface
-    {
-        public void PersonPay()
+   {
+       public void PersonPay()
         {
             Console.WriteLine("************************接口实现*****************************");
             Animal animal = new Person("xuesky",10,s=> s + s);

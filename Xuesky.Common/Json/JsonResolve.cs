@@ -15,8 +15,7 @@ namespace Xuesky.Common.Json
         public JsonResolve()
         {
             Console.WriteLine("******************************Json数据处理*******************************");
-            JObject j = new JObject();
-            j["name"] = "xuesky";
+            JObject j = new JObject {["name"] = "xuesky"};
             Console.WriteLine($"输出JObject值:{j}");
             List<Article> list = GetArticleList();
             list.Sort();

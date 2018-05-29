@@ -13,6 +13,7 @@ using Xuesky.Common.IOAndStream;
 using Xuesky.Common.JWT;
 using Xuesky.Common.Lamda;
 using Xuesky.Common.Models;
+using Xuesky.Common.Other;
 using Xuesky.Common.ToInterface;
 
 
@@ -22,28 +23,27 @@ namespace Xuesky.Common
     {
         private static void Main(string[] args)
         {
+            object obj = new StudentDto();
+            var res = obj as StudentDto;
             Stopwatch watch = new Stopwatch();
             watch.Start();
-            System.Console.WriteLine(DateTimeOffset.Now);
-            string test = "|||||";
-            string[] arrStrings = test.Split('|');
-            Console.WriteLine(arrStrings[0]);
+            Console.WriteLine("********************开始监测执行时间**********************");
             dynamic ss = new System.Dynamic.ExpandoObject();
-
-            Console.OutputEncoding = Encoding.UTF8;
-            DateTime now = DateTime.Now.AddDays(1);
-            var week = (int)now.DayOfWeek;
-            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd"));
+            ss = "test";
+            Console.WriteLine("********************字典排序**********************");
             //字典
-
             Dict.DictTest dictTest = new Dict.DictTest();
             dictTest.DictOrder();
+            Console.WriteLine("********************JSON业务处理**********************");
             //JSON
             Json.JsonResolve jsonResolve = new Json.JsonResolve();
+            Console.WriteLine("********************C#7新特性**********************");
             //C#7新特性
             C7.Features features = new C7.Features();
             var userInfo = features.GetUserInfo();
             Console.WriteLine($"多值返回，name:{userInfo.name},age:{userInfo.age}");
+
+            Console.WriteLine("********************值注入**********************");
             //值注入
             Dto dto = new Dto();
             dto.DtoTest();
@@ -53,8 +53,6 @@ namespace Xuesky.Common
             //Delet.DeleAndThread deleg = new Delet.DeleAndThread();
             //文件流读取
             MyStream.FileStreamReadFile();
-
-            Console.WriteLine($"我是Main参数值:{String.Join(',', args)}");
 
             new ImplInterface().PersonPay();
             //Lamda
@@ -75,6 +73,9 @@ namespace Xuesky.Common
             watch.Stop();
 
             Console.WriteLine($"执行时间为:{watch.ElapsedMilliseconds}ms");
+
+            YieldTest.PrintSudentList();
+
             Console.ReadLine();
         }
         private static string XmlSerialize(object o)

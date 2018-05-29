@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 
 namespace Xuesky.Common.Lamda
 {
@@ -20,17 +21,20 @@ namespace Xuesky.Common.Lamda
 
         public static void UserSelectMany()
         {
-            var list = _teachers.SelectMany(s => s.Students,(a,c)=>new {a,c}).Where(s=>s.c.Score<60);
+            var list = _teachers
+                .SelectMany(teacher => teacher.Students, (a, c) => new { a, c })
+                .Where(a => a.c.Score < 60)
+                .ToList();
+            var list1 = _teachers.SelectMany(teacher => new List<string>{"a","b"});
+            var list2 = _teachers.Select(teacher => teacher);
+            var s = _teachers.Where(teacher => true).Count();
         }
     }
     class Student
     {
         public int Score { get; set; }
 
-        public Student(int score)
-        {
-            this.Score = score;
-        }
+        public Student(int score) => this.Score = score;
     }
 
     class Teacher

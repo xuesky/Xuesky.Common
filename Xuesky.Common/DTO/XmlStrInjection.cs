@@ -7,10 +7,7 @@ namespace Xuesky.Common.DTO
     {
         private string _student = "name";
 
-        public XmlStrInjection(string student)
-        {
-            this._student = student;
-        }
+        public XmlStrInjection(string student) => this._student = student;
 
         public XmlStrInjection()
         {

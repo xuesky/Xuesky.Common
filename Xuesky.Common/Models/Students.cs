@@ -8,15 +8,12 @@ namespace Xuesky.Common.Models
     public class Students
     {
         public string ClassName { get; set; }
-        public Students()
-        {
-            stus = new List<Student>
+        public Students() => stus = new List<Student>
             {
                 new Student {fname = "wushuangqi1",lname=",last", id = "1"},
                 new Student {fname = "wushuangqi",lname=",last", id = "2"},
                 new Student {fname = "lingyuan",lname=",last", id = "2"}
             };
-        }
 
         public List<Student> stus { get; set; }
     }

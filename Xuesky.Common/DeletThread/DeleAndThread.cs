@@ -43,12 +43,12 @@ namespace Xuesky.Common.Delet
             Console.WriteLine("************************多线程*****************************");
             Task task = new Task(t => { Console.WriteLine($"我是多线程:{t},线程ID为:{Thread.CurrentThread.ManagedThreadId}"); }, 5);
             task.Start();
-            var t1 = Task.Factory.StartNew(doSomething);
-            var t2 = Task.Factory.StartNew(doSomething);
-            var t3 = Task.Factory.StartNew(doSomething);
-            var t4 = Task.Factory.StartNew(doSomething);
-            var t5 = Task.Factory.StartNew(doSomething);
-            var t6 = Task.Factory.StartNew(doSomething);
+            var t1 = Task.Factory.StartNew(DoSomething);
+            var t2 = Task.Factory.StartNew(DoSomething);
+            var t3 = Task.Factory.StartNew(DoSomething);
+            var t4 = Task.Factory.StartNew(DoSomething);
+            var t5 = Task.Factory.StartNew(DoSomething);
+            var t6 = Task.Factory.StartNew(DoSomething);
 
             Console.WriteLine("是否主动释放DbContext（y/n）");
             var yes = Console.ReadLine();
@@ -70,7 +70,7 @@ namespace Xuesky.Common.Delet
         }
 
         private static (string name, int age) GetSomething(string name, int age) => (name, age);
-        public static void doSomething()
+        public static void DoSomething()
         {
             Object obj = new object();
             lock (obj)
