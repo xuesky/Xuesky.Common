@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 
 namespace Xuesky.Common.Lamda
 {
-   public static class LamdaTest
+    public static class LambdaTest
     {
         static List<Teacher> _teachers = new List<Teacher>
         {
@@ -25,9 +23,14 @@ namespace Xuesky.Common.Lamda
                 .SelectMany(teacher => teacher.Students, (a, c) => new { a, c })
                 .Where(a => a.c.Score < 60)
                 .ToList();
-            var list1 = _teachers.SelectMany(teacher => new List<string>{"a","b"});
+            var list1 = _teachers.SelectMany(teacher => new List<string> { "a", "b" });
             var list2 = _teachers.Select(teacher => teacher);
             var s = _teachers.Where(teacher => true).Count();
+            var result = Where("a")(_teachers);
+        }
+        private static Func<List<Teacher>, Teacher> Where(string name)
+        {
+            return x => x.FirstOrDefault(s => s.Name == name);
         }
     }
     class Student

@@ -1,12 +1,12 @@
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 
 namespace Xuesky.Common.EF
 {
-  public class ContextNameContext : DbContext
-  {
-    ILogger<ContextNameContext> _logger;
+    public class ContextNameContext : DbContext
+    {
+        ILogger<ContextNameContext> _logger;
 
         public ContextNameContext(DbContextOptions<ContextNameContext> options, ILogger<ContextNameContext> logger)
           : base(options) => _logger = logger;
@@ -14,10 +14,10 @@ namespace Xuesky.Common.EF
         public DbSet<Blog> Blogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
-    {
-      base.OnModelCreating(builder);
+        {
+            base.OnModelCreating(builder);
+        }
     }
-  }
     public class Blog
     {
         public int BlogId { get; set; }

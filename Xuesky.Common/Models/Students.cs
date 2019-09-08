@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Xuesky.Common.Models
 {
@@ -12,7 +10,7 @@ namespace Xuesky.Common.Models
             {
                 new Student {fname = "wushuangqi1",lname=",last", id = "1"},
                 new Student {fname = "wushuangqi",lname=",last", id = "2"},
-                new Student {fname = "lingyuan",lname=",last", id = "2"}
+                new Student {fname = "lingyuan",lname=",last", id = "3"}
             };
 
         public List<Student> stus { get; set; }

@@ -24,6 +24,7 @@ namespace Xuesky.Common.DTO
         /// </summary>
         public void DtoTest()
         {
+            
             Console.WriteLine("******************************使用ValueInjecter实现值注入*******************************************");
             Omu.ValueInjecter.Mapper.AddMap<Student, StudentDto>(src =>
             {

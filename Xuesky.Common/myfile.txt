@@ -1,1 +1,160 @@
-﻿我是来测试的
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>medicalRecord</title>
+		<script src="../js/main/jquery-1.11.1.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/main/amazeui.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/main/flexible.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/main/flexible_css.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/medicalRecord.js" type="text/javascript" charset="utf-8"></script>
+
+		<link rel="stylesheet" type="text/css" href="../css/main/amazeui.min.css" />
+		<link rel="stylesheet" type="text/css" href="../css/main/animate.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/medicalRecord.css" />
+	</head>
+	<body>
+		<div class="shell">
+			<div id="myAppointment">
+				<div class="header">
+					<span>我的预约</span>
+					<div class="showCarName">
+						<span class="headerName">谢松霖</span><span class="headerCard">0158749</span>
+					</div>
+					<img class="backBtn" src="../images/back.png" alt="" />
+					<div class="right-btn">
+						<img class="changeUser" src="../images/appointment/changeUser.png" alt="" />
+					</div>
+				</div>
+				<div class="contentBox">
+					<div class="noInfo" style="display: none;">
+						暂无我的预约信息！
+					</div>
+					<div class="item">
+						<div class="headers">
+							<div class="headerLeft">
+								<img src="../images/myAppointment/timeIcon.png" alt="">
+								<span>就诊时间:2018-01-02 14:40</span>
+							</div>
+							<div class="headerRight">
+								<span>查看详情</span>
+								<img src="../images/appoitmentIcon.png" alt="">
+							</div>
+						</div>
+						<div class="content">
+							<img class="leftTopImg" src="../images/recipePay/banyuan.png" alt="" />
+							<img class="leftBottomImg" src="../images/recipePay/banyuan.png" alt="" />
+							<img class="rightTopImg" src="../images/recipePay/banyuan.png" alt="" />
+							<img class="rightBottomImg" src="../images/recipePay/banyuan.png" alt="" />
+							<div class="top">
+								<div class="hospName">
+									云南省第一人民医院
+								</div>
+								<div class="deptInfo">
+									<span>骨伤科门诊本部</span>
+									<span>主任医师</span>
+									<span>董伟</span>
+								</div>
+							</div>
+							<div class="foot">
+								<div class="number">
+									<div>门诊卡号：0000000000</div>
+									<div>编号：2858994</div>
+								</div>
+								<div class="pic">
+									￥10.15
+								</div>
+							</div>
+						</div>
+						<div class="bottom">
+							<span class="checkIn processed">已处理</span>
+							<span class="evaluation unprocessed">未处理</span>
+						</div>
+					</div>
+					
+					<div class="item">
+						<div class="headers">
+							<div class="headerLeft">
+								<img src="../images/myAppointment/timeIcon.png" alt="">
+								<span>就诊时间:2018-01-02 14:40</span>
+							</div>
+							<div class="headerRight">
+								<span>查看详情</span>
+								<img src="../images/appoitmentIcon.png" alt="">
+							</div>
+						</div>
+						<div class="content">
+							<img class="leftTopImg" src="../images/recipePay/banyuan.png" alt="" />
+							<img class="leftBottomImg" src="../images/recipePay/banyuan.png" alt="" />
+							<img class="rightTopImg" src="../images/recipePay/banyuan.png" alt="" />
+							<img class="rightBottomImg" src="../images/recipePay/banyuan.png" alt="" />
+							<div class="top">
+								<div class="hospName">
+									云南省第一人民医院
+								</div>
+								<div class="deptInfo">
+									<span>骨伤科门诊本部</span>
+									<span>主任医师</span>
+									<span>董伟</span>
+								</div>
+							</div>
+							<div class="foot">
+								<div class="number">
+									<div>门诊卡号：0000000000</div>
+									<div>编号：2858994</div>
+								</div>
+								<div class="pic">
+									￥10.15
+								</div>
+							</div>
+						</div>
+						<div class="bottom">
+							<span class="checkIn processed">已处理</span>
+							<span class="evaluation unprocessed">未处理</span>
+						</div>
+					</div>
+				</div>
+				<!-- 显示选择成员和就诊卡页面 -->
+				<div class="selectCarBox" style="display: none;">
+					<div class="selectCarContentBox animated">
+						<div class="selectCar">
+							<div class="title">选择成员及就诊卡</div>
+							<div class="addMember">选择成员</div>
+							<div class="selectCarContent">
+								<div class="leftName">
+									<div class="nameItem activeNameItem">
+										谢松霖
+									</div>
+									<div class="nameItem">
+										张三
+									</div>
+									<div class="nameItem">
+										李四
+									</div>
+									<div class="nameItem">
+										王五
+									</div>
+								</div>
+								<div class="rightCarNum">
+									<div class="carNumItem hasCarNum">
+										<span class="number">1010101010</span>
+										<span class="isDefault">默认</span>
+									</div>
+									<div class="carNumItem hasCarNum">
+										<span class="number">1010101010</span>
+										<span class="isDefault"></span>
+									</div>
+									<div class="carNumItem hasCarNum">
+										<span class="number">1010101010</span>
+										<span class="isDefault"></span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

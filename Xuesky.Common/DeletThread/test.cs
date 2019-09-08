@@ -12,7 +12,7 @@ namespace Xuesky.Common.Delet
 
         public async Task<int> LoadCache(int s)
         {
-             //simulate async work:
+            //simulate async work:
             for (int i = 0; i < s; i++)
             {
                 await Task.Delay(500);
