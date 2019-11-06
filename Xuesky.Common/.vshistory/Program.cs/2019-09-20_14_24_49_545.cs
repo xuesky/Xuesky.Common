@@ -18,22 +18,62 @@ namespace Xuesky.Common
         /// <exception cref="System.Security.SecurityException"></exception>
         private static async Task Main(string[] args)
         {
+            //var task = Task.Factory.StartNew(() =>
+            //{
+            //    using (var httpClient = new HttpClient())
+            //    {
+            //        httpClient.GetAsync("http://localhost:8081")
+            //        .ContinueWith(s =>
+            //        {
+            //            var path2 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "myfile22.txt");
+            //            if (!File.Exists(path2))
+            //            {
+            //                File.Create(path2);
+            //            }
+
+            //            File.WriteAllText(path2, s.Result.Content.ReadAsStringAsync().Result, Encoding.UTF8);
+            //        }, TaskContinuationOptions.OnlyOnRanToCompletion
+            //        ); ;
+            //    }
+            //}
+            //);
+            //Task.Factory.StartNew(() =>
+            //{
+            //    using (var httpClient = new HttpClient())
+            //    {
+            //        Console.WriteLine($"线程ID:{Thread.CurrentThread.ManagedThreadId}");
+            //        Console.WriteLine(httpClient.GetStringAsync("http://localhost:8081").GetAwaiter().GetResult());
+            //    }
+            //}
+            //);
+            Console.WriteLine("hello");
             Func<AsyncCallback, object, Task<string>> func = async (call, o) =>
+             {
+                 using (var httpClient = new HttpClient())
+                 {
+                     return await httpClient.GetStringAsync("http://localhost:8081");
+                 }
+             };
+            //var taskAsync = Task.Factory.FromAsync(func(null, "我是AsyncState参数"), ar =>
+            //  {
+            //      Console.WriteLine(ar.AsyncState);
+            //      ((Task<string>)ar).ContinueWith(s => Console.WriteLine(s.Result));
+            //      Console.WriteLine("EndInvoke执行完了");
+            //  }, TaskCreationOptions.None);
+            var taskAsync = Task.Factory.FromAsync((call, o) =>
             {
                 using (var httpClient = new HttpClient())
                 {
-                    return await httpClient.GetStringAsync("http://localhost:8081");
+                    return httpClient.GetStringAsync("http://localhost:8081");
                 }
-            };
-            var taskAsync = Task.Factory.FromAsync(func(asyn =>
-            {
-                Console.WriteLine(asyn.AsyncState);
-            }, "我是AsyncState参数"), ar =>
-            {
-                Console.WriteLine(ar.AsyncState);
-                ((Task<string>)ar).ContinueWith(s => Console.WriteLine(s.Result));
-                Console.WriteLine("EndInvoke执行完了");
-            });
+            }, async ar =>
+              {
+                  Console.WriteLine(ar.AsyncState);
+                  await ((Task<string>)ar).ContinueWith(s => Console.WriteLine(s.Result));
+                  Console.WriteLine("EndInvoke执行完了");
+              }, "hello AsyncState");
+            Console.WriteLine("我是下一步的操作");
+            Console.ReadLine();
             //RedisStudy redis = new RedisStudy();
             //redis.SetSet();
             //redis.GetSet();

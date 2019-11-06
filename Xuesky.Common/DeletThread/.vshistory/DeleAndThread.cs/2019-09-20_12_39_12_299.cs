@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq.Expressions;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,10 +9,6 @@ namespace Xuesky.Common.Delet
     public delegate void Dosomething(string name);
     public class DeleAndThread
     {
-        /// <summary>
-        /// ctor
-        /// </summary>
-        /// <exception cref="IOException"></exception>
         public DeleAndThread()
         {
             Console.WriteLine("****************************委托执行测试*****************************************");
@@ -79,11 +74,6 @@ namespace Xuesky.Common.Delet
             }
             return 1;
         }
-        /// <summary>
-        /// UpdataUIThread
-        /// </summary>
-        /// <exception cref="ObjectDisposedException"></exception>
-        /// <exception cref="InvalidOperationException"></exception>
         public void UpdataUIThread()
         {
             Task task = Task.Factory.StartNew(() =>
@@ -101,15 +91,6 @@ namespace Xuesky.Common.Delet
                 //btnTask.Text = "哈哈，变了";
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }
-        /// <summary>
-        /// FromAsync
-        /// </summary>
-        /// <exception cref="ObjectDisposedException"></exception>
-        /// <exception cref="IOException"></exception>
-        /// <exception cref="HttpRequestException"></exception>
-        /// <exception cref="NullReferenceException"></exception>
-        /// <exception cref="TaskCanceledException"></exception>
-        /// <exception cref="Exception"></exception>
         public void FromAsync()
         {
             FileStream fs = new FileStream(Path.Combine(Environment.CurrentDirectory, "1.txt"), FileMode.Open);
@@ -144,14 +125,6 @@ namespace Xuesky.Common.Delet
 
             Console.WriteLine(taskFunc1.Result);
 
-            Task.Factory.StartNew(() =>
-            {
-                using (var httpClient = new HttpClient())
-                {
-                    Console.WriteLine($"线程ID:{Thread.CurrentThread.ManagedThreadId}");
-                    Console.WriteLine(httpClient.GetStringAsync("http://localhost:8081").GetAwaiter().GetResult());
-                }
-            });
 
             Func<AsyncCallback, object, Task<string>> func = async (call, o) =>
             {
@@ -167,12 +140,6 @@ namespace Xuesky.Common.Delet
                 Console.WriteLine("EndInvoke执行完了");
             });
         }
-        /// <summary>
-        /// Dosomething1
-        /// </summary>
-        /// <param name="str"></param>
-        /// <param name="i"></param>
-        /// <exception cref="IOException"></exception>
         private static void Dosomething1(string str, int i)
         {
             Console.WriteLine(str);

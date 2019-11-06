@@ -16,24 +16,46 @@ namespace Xuesky.Common
         /// <exception cref="System.IO.IOException"></exception>
         /// <exception cref="UnauthorizedAccessException"></exception>
         /// <exception cref="System.Security.SecurityException"></exception>
-        private static async Task Main(string[] args)
+        private static void Main(string[] args)
         {
-            Func<AsyncCallback, object, Task<string>> func = async (call, o) =>
+            //var task = Task.Factory.StartNew(() =>
+            //{
+            //    using (var httpClient = new HttpClient())
+            //    {
+            //        httpClient.GetAsync("http://localhost:8081")
+            //        .ContinueWith(s =>
+            //        {
+            //            var path2 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "myfile22.txt");
+            //            if (!File.Exists(path2))
+            //            {
+            //                File.Create(path2);
+            //            }
+
+            //            File.WriteAllText(path2, s.Result.Content.ReadAsStringAsync().Result, Encoding.UTF8);
+            //        }, TaskContinuationOptions.OnlyOnRanToCompletion
+            //        ); ;
+            //    }
+            //}
+            //);
+            AsyncCallback callback = t =>
+
             {
-                using (var httpClient = new HttpClient())
-                {
-                    return await httpClient.GetStringAsync("http://localhost:8081");
-                }
+                Console.WriteLine("callback");
+                Console.WriteLine(t.AsyncState);
             };
-            var taskAsync = Task.Factory.FromAsync(func(asyn =>
-            {
-                Console.WriteLine(asyn.AsyncState);
-            }, "我是AsyncState参数"), ar =>
-            {
-                Console.WriteLine(ar.AsyncState);
-                ((Task<string>)ar).ContinueWith(s => Console.WriteLine(s.Result));
-                Console.WriteLine("EndInvoke执行完了");
-            });
+            Func<AsyncCallback, object, Task> func = (call, obj) =>
+              {
+                  using (var httpClient = new HttpClient())
+                  {
+                      return httpClient.GetAsync("http://localhost:8081");
+                  }
+              };
+            var taskAsync = Task.Factory.FromAsync(func(callback, "12323"),
+                result =>
+                {
+                    Console.WriteLine("执行结束");
+                    Console.WriteLine(result.AsyncState);
+                });
             //RedisStudy redis = new RedisStudy();
             //redis.SetSet();
             //redis.GetSet();

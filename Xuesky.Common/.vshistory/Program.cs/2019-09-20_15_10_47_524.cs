@@ -18,22 +18,6 @@ namespace Xuesky.Common
         /// <exception cref="System.Security.SecurityException"></exception>
         private static async Task Main(string[] args)
         {
-            Func<AsyncCallback, object, Task<string>> func = async (call, o) =>
-            {
-                using (var httpClient = new HttpClient())
-                {
-                    return await httpClient.GetStringAsync("http://localhost:8081");
-                }
-            };
-            var taskAsync = Task.Factory.FromAsync(func(asyn =>
-            {
-                Console.WriteLine(asyn.AsyncState);
-            }, "我是AsyncState参数"), ar =>
-            {
-                Console.WriteLine(ar.AsyncState);
-                ((Task<string>)ar).ContinueWith(s => Console.WriteLine(s.Result));
-                Console.WriteLine("EndInvoke执行完了");
-            });
             //RedisStudy redis = new RedisStudy();
             //redis.SetSet();
             //redis.GetSet();

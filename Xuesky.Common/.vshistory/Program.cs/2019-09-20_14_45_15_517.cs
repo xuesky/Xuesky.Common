@@ -18,22 +18,31 @@ namespace Xuesky.Common
         /// <exception cref="System.Security.SecurityException"></exception>
         private static async Task Main(string[] args)
         {
+            Console.WriteLine("hello");
             Func<AsyncCallback, object, Task<string>> func = async (call, o) =>
-            {
-                using (var httpClient = new HttpClient())
-                {
-                    return await httpClient.GetStringAsync("http://localhost:8081");
-                }
-            };
-            var taskAsync = Task.Factory.FromAsync(func(asyn =>
-            {
-                Console.WriteLine(asyn.AsyncState);
-            }, "我是AsyncState参数"), ar =>
+             {
+                 using (var httpClient = new HttpClient())
+                 {
+                     Console.WriteLine(o);
+                     return await httpClient.GetStringAsync("http://localhost:8081");
+                 }
+             };
+            AsyncCallback aaa = ar =>
             {
                 Console.WriteLine(ar.AsyncState);
-                ((Task<string>)ar).ContinueWith(s => Console.WriteLine(s.Result));
-                Console.WriteLine("EndInvoke执行完了");
+            };
+            //var taskAsync = Task.Factory.FromAsync(func(null, "我是AsyncState参数"), ar =>
+            //  {
+            //      Console.WriteLine(ar.AsyncState);
+            //      ((Task<string>)ar).ContinueWith(s => Console.WriteLine(s.Result));
+            //      Console.WriteLine("EndInvoke执行完了");
+            //  }, TaskCreationOptions.None);
+            var taskAsync = Task.Factory.FromAsync(func(null, "我是AsyncState参数"), ar =>
+            {
+                aaa(ar);
             });
+            Console.WriteLine("我是下一步的操作");
+            Console.ReadLine();
             //RedisStudy redis = new RedisStudy();
             //redis.SetSet();
             //redis.GetSet();

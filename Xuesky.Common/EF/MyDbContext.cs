@@ -1,6 +1,6 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace Xuesky.Common.EF
 {
