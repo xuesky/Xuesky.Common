@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+using SshNet.Security.Cryptography;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +18,10 @@ namespace Xuesky.Common.Net
             HttpClient client = new HttpClient();
             HttpContent content = new StringContent("123123");
             var result = client.PostAsync("http://www.baidu.com", content).Result.Content.ReadAsStringAsync().Result;
+
+            var md = MD5.Create();
+            var data = md.ComputeHash(Encoding.UTF8.GetBytes("1233"));
+
         }
     }
 }

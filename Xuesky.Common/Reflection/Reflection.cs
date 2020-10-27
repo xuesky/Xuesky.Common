@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -12,6 +12,24 @@ namespace Xuesky.Common.Reflection
     public class MyReflection
     {
 
+        /// <summary>
+        /// BaseMethod
+        /// </summary>
+        /// <exception cref="FileNotFoundException"></exception>
+        /// <exception cref="FileLoadException"></exception>
+        /// <exception cref="BadImageFormatException"></exception>
+        /// <exception cref="TargetInvocationException"></exception>
+        /// <exception cref="MethodAccessException"></exception>
+        /// <exception cref="MemberAccessException"></exception>
+        /// <exception cref="System.Runtime.InteropServices.InvalidComObjectException"></exception>
+        /// <exception cref="MissingMethodException"></exception>
+        /// <exception cref="System.Runtime.InteropServices.COMException"></exception>
+        /// <exception cref="TypeLoadException"></exception>
+        /// <exception cref="IOException"></exception>
+        /// <exception cref="OutOfMemoryException"></exception>
+        /// <exception cref="ReflectionTypeLoadException"></exception>
+        /// <exception cref="UnauthorizedAccessException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
         public void BaseMethod()
         {
             ZipFile.CreateFromDirectory(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "configs"), Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "123.zip"));
@@ -40,6 +58,7 @@ namespace Xuesky.Common.Reflection
             var oa = Activator.CreateInstance(type, "薛小锋");
             var o = (IGetUserInfo)oa;
             o.GetName();
+            //TODO 待定
         }
     }
 }

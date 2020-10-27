@@ -1,4 +1,4 @@
-﻿using StackExchange.Redis;
+using StackExchange.Redis;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,12 +11,17 @@ namespace Xuesky.Common.Redis
 
         static RedisStudy()
         {
+            var list = new List<string>()
+            {
+                "a","b"
+            };
             server = ConnectionMultiplexer.Connect(
                 new ConfigurationOptions
                 {
                     DefaultDatabase = 0,
                     EndPoints = {
-                        { "192.168.16.129", 6379 }
+                        { "192.168.16.129", 6379 },
+                        { "192.168.16.129", 6379}
                     }
                 }
                 );

@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.Net.Http;
-using System.Threading.Tasks;
+using Xuesky.Common.Redis;
+using Xuesky.Common.Pattern;
 
 namespace Xuesky.Common
 {
@@ -16,24 +19,24 @@ namespace Xuesky.Common
         /// <exception cref="System.IO.IOException"></exception>
         /// <exception cref="UnauthorizedAccessException"></exception>
         /// <exception cref="System.Security.SecurityException"></exception>
-        private static async Task Main(string[] args)
+        private static void Main(string[] args)
         {
-            Func<AsyncCallback, object, Task<string>> func = async (call, o) =>
-            {
-                using (var httpClient = new HttpClient())
-                {
-                    return await httpClient.GetStringAsync("http://localhost:8081");
-                }
-            };
-            var taskAsync = Task.Factory.FromAsync(func(asyn =>
-            {
-                Console.WriteLine(asyn.AsyncState);
-            }, "我是AsyncState参数"), ar =>
-            {
-                Console.WriteLine(ar.AsyncState);
-                ((Task<string>)ar).ContinueWith(s => Console.WriteLine(s.Result));
-                Console.WriteLine("EndInvoke执行完了");
-            });
+            //Func<AsyncCallback, object, Task<string>> func = async (call, o) =>
+            //{
+            //    using (var httpClient = new HttpClient())
+            //    {
+            //        return await httpClient.GetStringAsync("http://localhost:8081");
+            //    }
+            //};
+            //var taskAsync = Task.Factory.FromAsync(func(asyn =>
+            //{
+            //    Console.WriteLine(asyn.AsyncState);
+            //}, "我是AsyncState参数"), ar =>
+            //{
+            //    Console.WriteLine(ar.AsyncState);
+            //    ((Task<string>)ar).ContinueWith(s => Console.WriteLine(s.Result));
+            //    Console.WriteLine("EndInvoke执行完了");
+            //});
             //RedisStudy redis = new RedisStudy();
             //redis.SetSet();
             //redis.GetSet();
@@ -103,7 +106,28 @@ namespace Xuesky.Common
 
             //LinkedListDemo.ss();
             //watch.Stop();
+            //var ints = new int[] { 1, 2, 3 };
+            //var obj = ints;
+            //var bl = obj as IEnumerable;
+            //System.Console.WriteLine(bl);
+
+            //JObject jObject = JObject.Parse("{\"data\":[{\"code\":0,\"fee\":1,\"mobile\":13700630633,\"msg\":\"成功\",\"sid\":\"cd911d5f-4a40-42a1-97e2-313625d8f860\",\"uid\":1234}],\"total_fee\":1}");
+            //JToken jToken = jObject["data"][0];
+            //string sid = jToken["sid"].ToString();
+            //Console.WriteLine(sid);
+
+            //new ListenerSqlServer();
+            //var formData = URLHelper.QueryToFormUrlEncoded("name=xuesky&age=38&sex=0");
+
+            //MongoDB
+            //new MongoDbTest();
+
+            System.Console.WriteLine("**********************Pattern***********************");
+            new FactoryMethod();
+            new Observer();
+
             Console.ReadLine();
         }
     }
+    
 }
