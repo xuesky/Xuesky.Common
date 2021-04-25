@@ -1,8 +1,5 @@
-﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using Xuesky.Common.Redis;
 using Xuesky.Common.Pattern;
 
 namespace Xuesky.Common
@@ -126,8 +123,9 @@ namespace Xuesky.Common
             new FactoryMethod();
             new Observer();
 
+            Console.WriteLine("Fork");
             Console.ReadLine();
         }
     }
-    
+
 }
