@@ -143,11 +143,6 @@ namespace Xuesky.Common
             };
             var ss = stuList;
             stuList.Add(stu);
-var arr = "abcddd".Split('|');
-if (arr.Length == 1)
-{
-
-}
             Console.WriteLine("Fork");
             Console.ReadLine();
         }
