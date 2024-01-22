@@ -136,7 +136,7 @@ namespace Xuesky.Common
  */
             var stu = new Student()
             {
-                id = "1"
+                id = "12"
             };
             var stuList = new List<Student>{
                 stu
