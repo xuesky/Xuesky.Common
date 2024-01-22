@@ -143,15 +143,11 @@ namespace Xuesky.Common
             };
             var ss = stuList;
             stuList.Add(stu);
+var arr = "abcddd".Split('|');
+if (arr.Length == 1)
+{
 
-            var itemsForBank = Enumerable.Range(1, 15).ToDictionary(x => x, x =>
-         x == 2 ? "借款账号" :
-         x == 4 || x == 5 ? "银行结算账号" :
-         x == 15 ? "资金使用机构账号" :
-         "银行账号");
-var any = ss.Any();
-         JObject firstDetailJObj = JObject.Parse("{\"银行账号\": \"80800188000251473\"}");
-         var no = firstDetailJObj.Value<string>(itemsForBank[1]);
+}
             Console.WriteLine("Fork");
             Console.ReadLine();
         }
