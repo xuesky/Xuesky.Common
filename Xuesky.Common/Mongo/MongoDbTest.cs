@@ -45,7 +45,7 @@ namespace Xuesky.Common.Mongo
             //删除
             mongoDb.DeleteOne<Book>("5f0fd2905a48eb9e507ce891");
 
-            var dataList = mongoDb.GetListByPage<Book>(null, 0, 10, book => book.Datetime);
+            var dataList = mongoDb.ListByPage<Book>(null, 0, 10, book => book.Datetime);
 
 
             Console.WriteLine(result);

@@ -3,8 +3,10 @@ using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Xuesky.Common.Mongo
 {
@@ -35,6 +37,16 @@ namespace Xuesky.Common.Mongo
             return data;
         }
         ///<summary>
+        /// 插入单条数据
+        /// </summary>
+        /// <param name="data"></param>
+        public async Task<T> InsertOneAsync<T>(T data) where T : EntityBase, new()
+        {
+            var collection = _db.GetCollection<T>(typeof(T).Name);
+            await collection.InsertOneAsync(data);
+            return data;
+        }
+        ///<summary>
         /// 插入多条数据，数据用list表示
         /// </summary>
         /// <param name="list"></param>
@@ -42,6 +54,16 @@ namespace Xuesky.Common.Mongo
         {
             var collection = _db.GetCollection<T>(typeof(T).Name);
             collection.InsertMany(list);
+            return list;
+        }
+        ///<summary>
+        /// 插入多条数据，数据用list表示
+        /// </summary>
+        /// <param name="list"></param>
+        public async Task<List<T>> InsertBatchAsync<T>(List<T> list) where T : EntityBase, new()
+        {
+            var collection = _db.GetCollection<T>(typeof(T).Name);
+            await collection.InsertManyAsync(list);
             return list;
         }
         #endregion
@@ -63,6 +85,22 @@ namespace Xuesky.Common.Mongo
             return result.ModifiedCount > 0;
         }
         ///<summary>
+        /// 根据主键按需更新数据
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="entity"></param>
+        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="MemberAccessException"></exception>
+        /// <exception cref="System.Reflection.TargetInvocationException"></exception>
+        /// <exception cref="TypeLoadException"></exception>
+        public async Task<bool> UpdateOneAsync<T>(string id, Expression<Action<T>> entity) where T : EntityBase, new()
+        {
+            IMongoCollection<T> collection = _db.GetCollection<T>(typeof(T).Name);
+            List<UpdateDefinition<T>> fieldList = GetUpdateDefinition(entity);
+            var result = await collection.UpdateOneAsync(o => o.Id == id, Builders<T>.Update.Combine(fieldList));
+            return result.ModifiedCount > 0;
+        }
+        ///<summary>
         /// 根据条件按需更新数据
         /// </summary>
         /// <param name="filter">过滤条件</param>
@@ -75,6 +113,21 @@ namespace Xuesky.Common.Mongo
             IMongoCollection<T> collection = _db.GetCollection<T>(typeof(T).Name);
             List<UpdateDefinition<T>> fieldList = GetUpdateDefinition(entity);
             var result = collection.UpdateMany(filter, Builders<T>.Update.Combine(fieldList));
+            return result.ModifiedCount > 0;
+        }
+        ///<summary>
+        /// 根据条件按需更新数据
+        /// </summary>
+        /// <param name="filter">过滤条件</param>
+        /// <param name="entity">按需更新实体字段对象</param>
+        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="MemberAccessException"></exception>
+        /// <exception cref="System.Reflection.TargetInvocationException"></exception>
+        public async Task<bool> UpdateManyAsync<T>(Expression<Func<T, bool>> filter, Expression<Action<T>> entity) where T : EntityBase, new()
+        {
+            IMongoCollection<T> collection = _db.GetCollection<T>(typeof(T).Name);
+            List<UpdateDefinition<T>> fieldList = GetUpdateDefinition(entity);
+            var result = await collection.UpdateManyAsync(filter, Builders<T>.Update.Combine(fieldList));
             return result.ModifiedCount > 0;
         }
         /// <summary>
@@ -128,6 +181,17 @@ namespace Xuesky.Common.Mongo
             return result.ModifiedCount > 0;
         }
         ///<summary>
+        /// 根据Id更新数据
+        /// </summary>
+        /// <param name="Id">Id</param>
+        /// <param name="update">更新对象</param>
+        public async Task<bool> UpdateOneAsync<T>(string Id, UpdateDefinition<T> update) where T : EntityBase, new()
+        {
+            var collection = _db.GetCollection<T>(typeof(T).Name);
+            var result =await collection.UpdateOneAsync(o => o.Id == Id, update);
+            return result.ModifiedCount > 0;
+        }
+        ///<summary>
         /// 根据条件更新数据
         /// </summary>
         /// <param name="filter">过滤条件</param>
@@ -138,6 +202,17 @@ namespace Xuesky.Common.Mongo
             var result = collection.UpdateMany(filter, update);
             return result.ModifiedCount > 0;
         }
+        ///<summary>
+        /// 根据条件更新数据
+        /// </summary>
+        /// <param name="filter">过滤条件</param>
+        /// <param name="update">更新对象</param>
+        public async Task<bool> UpdateManyAsync<T>(FilterDefinition<T> filter, UpdateDefinition<T> update) where T : EntityBase, new()
+        {
+            var collection = _db.GetCollection<T>(typeof(T).Name);
+            var result = await collection.UpdateManyAsync(filter, update);
+            return result.ModifiedCount > 0;
+        }
         #endregion
         #region SELECT
         /// <summary>
@@ -146,10 +221,22 @@ namespace Xuesky.Common.Mongo
         /// <typeparam name="T"></typeparam>
         /// <param name="id"></param>
         /// <returns></returns>
-        public List<T> GetAll<T>() where T : EntityBase, new()
+        public List<T> All<T>() where T : EntityBase, new()
         {
             var collection = _db.GetCollection<T>(typeof(T).Name);
             return collection.Find(new BsonDocument()).ToList();
+        }
+        /// <summary>
+        /// 获取所有数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async  Task<List<T>> AllAsync<T>() where T : EntityBase, new()
+        {
+            var collection = _db.GetCollection<T>(typeof(T).Name);
+            var result =  await collection.FindAsync(new BsonDocument());
+            return result.ToList();
         }
         /// <summary>
         /// 根据查询条件，获取实体数据
@@ -165,9 +252,19 @@ namespace Xuesky.Common.Mongo
         /// 根据查询条件，获取实体数据
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public async Task<T> OneAsync<T>(Expression<Func<T, bool>> conditions) where T : EntityBase, new()
+        {
+            var collection = _db.GetCollection<T>(typeof(T).Name);
+            return await collection.Find(conditions).FirstOrDefaultAsync();
+        }
+        /// <summary>
+        /// 根据查询条件，获取记录总数
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="conditions"></param>
         /// <returns></returns>
-        public long GetCount<T>(Expression<Func<T, bool>> conditions) where T : EntityBase, new()
+        public long Count<T>(Expression<Func<T, bool>> conditions) where T : EntityBase, new()
         {
             if (this._db == null)
             {
@@ -184,6 +281,28 @@ namespace Xuesky.Common.Mongo
             }
         }
         /// <summary>
+        /// 根据查询条件，获取记录总数
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="conditions"></param>
+        /// <returns></returns>
+        public async Task<long> CountAsync<T>(Expression<Func<T, bool>> conditions) where T : EntityBase, new()
+        {
+            if (this._db == null)
+            {
+                return 0;
+            }
+            try
+            {
+                var collection = _db.GetCollection<T>(typeof(T).Name);
+                return await collection.CountDocumentsAsync(conditions);
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+        /// <summary>
         /// 获取分页数据
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -191,7 +310,7 @@ namespace Xuesky.Common.Mongo
         /// <param name="pageIndex">当前索引页</param>
         /// <param name="pageSize">每页显示数量</param>
         /// <returns></returns>
-        public (List<T> list, int pageCount) GetListByPage<T>(Expression<Func<T, bool>> conditions = null,
+        public (List<T> list, int pageCount) ListByPage<T>(Expression<Func<T, bool>> conditions = null,
             int pageIndex = 0, int pageSize = 25, Expression<Func<T, object>> sortBy = null) where T : EntityBase, new()
         {
             if (this._db == null)
@@ -215,12 +334,47 @@ namespace Xuesky.Common.Mongo
             return (list, pageCount);
         }
         /// <summary>
+        /// 获取分页数据
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="conditions">查询条件</param>
+        /// <param name="pageIndex">当前索引页</param>
+        /// <param name="pageSize">每页显示数量</param>
+        /// <returns></returns>
+        public async Task<(List<T> list, int pageCount)> ListByPageAsync<T>(Expression<Func<T, bool>> conditions = null,
+            int pageIndex = 0, int pageSize = 25, Expression<Func<T, object>> sortBy = null) where T : EntityBase, new()
+        {
+            if (this._db == null)
+            {
+                return await Task.FromResult<(List<T>, int)>((null, 0));
+            }
+            var collection = _db.GetCollection<T>(typeof(T).Name);
+            pageIndex = pageIndex < 0 ? 0 : pageIndex;
+            pageSize = pageSize <= 0 ? 25 : pageSize;
+            if (conditions == null)
+            {
+                conditions = _ => true;
+            }
+            if (sortBy == null)
+            {
+                sortBy = s => s.Id;
+            }
+            var list = await collection.Find(conditions)
+                    .SortByDescending(sortBy)
+                    .Skip(pageIndex * pageSize)
+                    .Limit(pageSize)
+                    .ToListAsync();
+            decimal recordCount = await collection.Find(conditions).CountDocumentsAsync();
+            int pageCount = (int)Math.Ceiling(recordCount / pageSize);
+            return (list, pageCount);
+        }
+        /// <summary>
         /// 根据查询条件，获取数据列表
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="conditions"></param>
         /// <returns></returns>
-        public List<T> GetList<T>(Expression<Func<T, bool>> conditions = null) where T : EntityBase, new()
+        public List<T> List<T>(Expression<Func<T, bool>> conditions = null) where T : EntityBase, new()
         {
             var collection = _db.GetCollection<T>(typeof(T).Name);
             if (conditions != null)
@@ -228,6 +382,21 @@ namespace Xuesky.Common.Mongo
                 return collection.Find(conditions).ToList();
             }
             return collection.Find(_ => true).ToList();
+        }
+        /// <summary>
+        /// 根据查询条件，获取数据列表
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="conditions"></param>
+        /// <returns></returns>
+        public async Task<List<T>> ListAsync<T>(Expression<Func<T, bool>> conditions = null) where T : EntityBase, new()
+        {
+            var collection = _db.GetCollection<T>(typeof(T).Name);
+            if (conditions != null)
+            {
+                return await collection.Find(conditions).ToListAsync();
+            }
+            return await collection.Find(_ => true).ToListAsync();
         }
         #endregion
         #region DELETE
@@ -242,6 +411,16 @@ namespace Xuesky.Common.Mongo
             return result.DeletedCount > 0;
         }
         ///<summary>
+        /// 删除单条数据
+        /// </summary>
+        /// <param name="id">id</param>
+        public async Task<bool> DeleteOneAsync<T>(string id) where T : EntityBase, new()
+        {
+            var collection = _db.GetCollection<T>(typeof(T).Name);
+            var result = await collection.DeleteOneAsync(o => o.Id == id);
+            return result.DeletedCount > 0;
+        }
+        ///<summary>
         /// 删除多条数据
         /// </summary>
         /// <param name="filter">过滤条件</param>
@@ -249,6 +428,16 @@ namespace Xuesky.Common.Mongo
         {
             var collection = _db.GetCollection<T>(typeof(T).Name);
             var result = collection.DeleteMany(filter);
+            return result.DeletedCount;
+        }
+        ///<summary>
+        /// 删除多条数据
+        /// </summary>
+        /// <param name="filter">过滤条件</param>
+        public async Task<long> DeleteBatchAsync<T>(Expression<Func<T, bool>> filter) where T : EntityBase, new()
+        {
+            var collection = _db.GetCollection<T>(typeof(T).Name);
+            var result = await collection.DeleteManyAsync(filter);
             return result.DeletedCount;
         }
         #endregion
@@ -267,6 +456,22 @@ namespace Xuesky.Common.Mongo
             IMongoCollection<T> collection = _db.GetCollection<T>(typeof(T).Name);
 
             var result = collection.ReplaceOne(o => o.Id == id, entity);
+            return result.ModifiedCount > 0;
+        }
+                ///<summary>
+        /// 根据主键替换数据
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="entity"></param>
+        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="MemberAccessException"></exception>
+        /// <exception cref="System.Reflection.TargetInvocationException"></exception>
+        /// <exception cref="TypeLoadException"></exception>
+        public async Task<bool> ReplaceOneAsync<T>(string id, T entity) where T : EntityBase, new()
+        {
+            IMongoCollection<T> collection = _db.GetCollection<T>(typeof(T).Name);
+
+            var result = await collection.ReplaceOneAsync(o => o.Id == id, entity);
             return result.ModifiedCount > 0;
         }
         #endregion
@@ -312,6 +517,57 @@ namespace Xuesky.Common.Mongo
                             CreateIndexModel<BsonDocument> indexModel = new CreateIndexModel<BsonDocument>(indexKey);
                             //创建该索引
                             mc.Indexes.CreateOne(indexModel);
+                        }
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        /// <summary>
+        /// 根据Key创建索引
+        /// </summary>
+        /// <typeparam name="T">需要创建索引的实体类型</typeparam>
+        /// <exception cref="Exception"></exception>
+        public async Task<bool> CreateIndexAsync<T>() where T : EntityBase, new()
+        {
+            if (this._db == null)
+            {
+                return false;
+            }
+            try
+            {
+                string collectionName = typeof(T).Name;
+                IMongoCollection<BsonDocument> mc = this._db.GetCollection<BsonDocument>(collectionName);
+
+                PropertyInfo[] propertys = typeof(T).GetProperties(BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.Public | BindingFlags.SetProperty);
+                //得到该实体类型的属性
+
+                foreach (PropertyInfo property in propertys)
+                {
+                    //在各个属性中得到其特性
+                    foreach (object obj in property.GetCustomAttributes(true))
+                    {
+                        MongoDbFieldAttribute mongoField = obj as MongoDbFieldAttribute;
+                        if (mongoField != null)
+                        {
+                            IndexKeysDefinition<BsonDocument> indexKey;
+                            if (mongoField.Ascending)
+                            {
+                                //升序 索引
+                                indexKey = Builders<BsonDocument>.IndexKeys.Ascending(property.Name);
+                            }
+                            else
+                            {
+                                //降序索引
+                                indexKey = Builders<BsonDocument>.IndexKeys.Descending(property.Name);
+                            }
+                            CreateIndexModel<BsonDocument> indexModel = new CreateIndexModel<BsonDocument>(indexKey);
+                            //创建该索引
+                            await mc.Indexes.CreateOneAsync(indexModel);
                         }
                     }
                 }

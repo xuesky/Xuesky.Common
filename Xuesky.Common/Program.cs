@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -141,8 +142,8 @@ namespace Xuesky.Common
             var stuList = new List<Student>{
                 stu
             };
-            var ss = stuList;
             stuList.Add(stu);
+           var pdf =  Path.ChangeExtension("hello.txt","pdf");
             Console.WriteLine("Fork");
             Console.ReadLine();
         }
