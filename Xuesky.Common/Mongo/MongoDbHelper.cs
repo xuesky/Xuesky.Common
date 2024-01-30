@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Xuesky.Common.Mongo
@@ -40,10 +41,11 @@ namespace Xuesky.Common.Mongo
         /// 插入单条数据
         /// </summary>
         /// <param name="data"></param>
-        public async Task<T> InsertOneAsync<T>(T data) where T : EntityBase, new()
+        public async Task<T> InsertOneAsync<T>(T data,
+        CancellationToken cancellationToken = default) where T : EntityBase, new()
         {
             var collection = _db.GetCollection<T>(typeof(T).Name);
-            await collection.InsertOneAsync(data);
+            await collection.InsertOneAsync(data,cancellationToken:cancellationToken);
             return data;
         }
         ///<summary>
@@ -60,10 +62,11 @@ namespace Xuesky.Common.Mongo
         /// 插入多条数据，数据用list表示
         /// </summary>
         /// <param name="list"></param>
-        public async Task<List<T>> InsertBatchAsync<T>(List<T> list) where T : EntityBase, new()
+        public async Task<List<T>> InsertBatchAsync<T>(List<T> list,
+        CancellationToken cancellationToken = default) where T : EntityBase, new()
         {
             var collection = _db.GetCollection<T>(typeof(T).Name);
-            await collection.InsertManyAsync(list);
+            await collection.InsertManyAsync(list,cancellationToken:cancellationToken);
             return list;
         }
         #endregion
@@ -93,11 +96,13 @@ namespace Xuesky.Common.Mongo
         /// <exception cref="MemberAccessException"></exception>
         /// <exception cref="System.Reflection.TargetInvocationException"></exception>
         /// <exception cref="TypeLoadException"></exception>
-        public async Task<bool> UpdateOneAsync<T>(string id, Expression<Action<T>> entity) where T : EntityBase, new()
+        public async Task<bool> UpdateOneAsync<T>(string id,
+        Expression<Action<T>> entity,
+        CancellationToken cancellationToken = default) where T : EntityBase, new()
         {
             IMongoCollection<T> collection = _db.GetCollection<T>(typeof(T).Name);
             List<UpdateDefinition<T>> fieldList = GetUpdateDefinition(entity);
-            var result = await collection.UpdateOneAsync(o => o.Id == id, Builders<T>.Update.Combine(fieldList));
+            var result = await collection.UpdateOneAsync(o => o.Id == id, Builders<T>.Update.Combine(fieldList),cancellationToken: cancellationToken);
             return result.ModifiedCount > 0;
         }
         ///<summary>
@@ -123,11 +128,13 @@ namespace Xuesky.Common.Mongo
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="MemberAccessException"></exception>
         /// <exception cref="System.Reflection.TargetInvocationException"></exception>
-        public async Task<bool> UpdateManyAsync<T>(Expression<Func<T, bool>> filter, Expression<Action<T>> entity) where T : EntityBase, new()
+        public async Task<bool> UpdateManyAsync<T>(Expression<Func<T, bool>> filter,
+         Expression<Action<T>> entity,
+         CancellationToken cancellationToken = default) where T : EntityBase, new()
         {
             IMongoCollection<T> collection = _db.GetCollection<T>(typeof(T).Name);
             List<UpdateDefinition<T>> fieldList = GetUpdateDefinition(entity);
-            var result = await collection.UpdateManyAsync(filter, Builders<T>.Update.Combine(fieldList));
+            var result = await collection.UpdateManyAsync(filter, Builders<T>.Update.Combine(fieldList),cancellationToken:cancellationToken);
             return result.ModifiedCount > 0;
         }
         /// <summary>
@@ -185,10 +192,12 @@ namespace Xuesky.Common.Mongo
         /// </summary>
         /// <param name="Id">Id</param>
         /// <param name="update">更新对象</param>
-        public async Task<bool> UpdateOneAsync<T>(string Id, UpdateDefinition<T> update) where T : EntityBase, new()
+        public async Task<bool> UpdateOneAsync<T>(string Id,
+        UpdateDefinition<T> update,
+        CancellationToken cancellationToken = default) where T : EntityBase, new()
         {
             var collection = _db.GetCollection<T>(typeof(T).Name);
-            var result =await collection.UpdateOneAsync(o => o.Id == Id, update);
+            var result =await collection.UpdateOneAsync(o => o.Id == Id, update,cancellationToken:cancellationToken);
             return result.ModifiedCount > 0;
         }
         ///<summary>
@@ -207,10 +216,12 @@ namespace Xuesky.Common.Mongo
         /// </summary>
         /// <param name="filter">过滤条件</param>
         /// <param name="update">更新对象</param>
-        public async Task<bool> UpdateManyAsync<T>(FilterDefinition<T> filter, UpdateDefinition<T> update) where T : EntityBase, new()
+        public async Task<bool> UpdateManyAsync<T>(FilterDefinition<T> filter,
+         UpdateDefinition<T> update,
+         CancellationToken cancellationToken = default) where T : EntityBase, new()
         {
             var collection = _db.GetCollection<T>(typeof(T).Name);
-            var result = await collection.UpdateManyAsync(filter, update);
+            var result = await collection.UpdateManyAsync(filter, update,cancellationToken:cancellationToken);
             return result.ModifiedCount > 0;
         }
         #endregion
@@ -224,7 +235,7 @@ namespace Xuesky.Common.Mongo
         public List<T> All<T>() where T : EntityBase, new()
         {
             var collection = _db.GetCollection<T>(typeof(T).Name);
-            return collection.Find(new BsonDocument()).ToList();
+            return collection.AsQueryable().ToList();
         }
         /// <summary>
         /// 获取所有数据
@@ -232,11 +243,30 @@ namespace Xuesky.Common.Mongo
         /// <typeparam name="T"></typeparam>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async  Task<List<T>> AllAsync<T>() where T : EntityBase, new()
+        public async  Task<List<T>> AllAsync<T>(CancellationToken cancellationToken = default) where T : EntityBase, new()
         {
             var collection = _db.GetCollection<T>(typeof(T).Name);
-            var result =  await collection.FindAsync(new BsonDocument());
-            return result.ToList();
+            return await collection.AsQueryable().ToListAsync();
+        }
+        /// <summary>
+        /// Any
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public bool Any<T>() where T : EntityBase, new()
+        {
+            var collection = _db.GetCollection<T>(typeof(T).Name);
+            return collection.AsQueryable().Any();
+        }
+        /// <summary>
+        /// Any
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public async Task<bool> AnyAsync<T>(CancellationToken cancellationToken = default) where T : EntityBase, new()
+        {
+            var collection = _db.GetCollection<T>(typeof(T).Name);
+            return await collection.AsQueryable().AnyAsync(cancellationToken);
         }
         /// <summary>
         /// 根据查询条件，获取实体数据
@@ -253,10 +283,11 @@ namespace Xuesky.Common.Mongo
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public async Task<T> OneAsync<T>(Expression<Func<T, bool>> conditions) where T : EntityBase, new()
+        public async Task<T> OneAsync<T>(Expression<Func<T, bool>> conditions,
+        CancellationToken cancellationToken = default) where T : EntityBase, new()
         {
             var collection = _db.GetCollection<T>(typeof(T).Name);
-            return await collection.Find(conditions).FirstOrDefaultAsync();
+            return await collection.Find(conditions).FirstOrDefaultAsync(cancellationToken);
         }
         /// <summary>
         /// 根据查询条件，获取记录总数
@@ -286,7 +317,8 @@ namespace Xuesky.Common.Mongo
         /// <typeparam name="T"></typeparam>
         /// <param name="conditions"></param>
         /// <returns></returns>
-        public async Task<long> CountAsync<T>(Expression<Func<T, bool>> conditions) where T : EntityBase, new()
+        public async Task<long> CountAsync<T>(Expression<Func<T, bool>> conditions,
+        CancellationToken cancellationToken = default) where T : EntityBase, new()
         {
             if (this._db == null)
             {
@@ -295,7 +327,7 @@ namespace Xuesky.Common.Mongo
             try
             {
                 var collection = _db.GetCollection<T>(typeof(T).Name);
-                return await collection.CountDocumentsAsync(conditions);
+                return await collection.CountDocumentsAsync(conditions,cancellationToken:cancellationToken);
             }
             catch
             {
@@ -342,7 +374,10 @@ namespace Xuesky.Common.Mongo
         /// <param name="pageSize">每页显示数量</param>
         /// <returns></returns>
         public async Task<(List<T> list, int pageCount)> ListByPageAsync<T>(Expression<Func<T, bool>> conditions = null,
-            int pageIndex = 0, int pageSize = 25, Expression<Func<T, object>> sortBy = null) where T : EntityBase, new()
+            int pageIndex = 0,
+            int pageSize = 25,
+            Expression<Func<T, object>> sortBy = null,
+            CancellationToken cancellationToken = default) where T : EntityBase, new()
         {
             if (this._db == null)
             {
@@ -363,8 +398,8 @@ namespace Xuesky.Common.Mongo
                     .SortByDescending(sortBy)
                     .Skip(pageIndex * pageSize)
                     .Limit(pageSize)
-                    .ToListAsync();
-            decimal recordCount = await collection.Find(conditions).CountDocumentsAsync();
+                    .ToListAsync(cancellationToken);
+            decimal recordCount = await collection.Find(conditions).CountDocumentsAsync(cancellationToken);
             int pageCount = (int)Math.Ceiling(recordCount / pageSize);
             return (list, pageCount);
         }
@@ -389,14 +424,15 @@ namespace Xuesky.Common.Mongo
         /// <typeparam name="T"></typeparam>
         /// <param name="conditions"></param>
         /// <returns></returns>
-        public async Task<List<T>> ListAsync<T>(Expression<Func<T, bool>> conditions = null) where T : EntityBase, new()
+        public async Task<List<T>> ListAsync<T>(Expression<Func<T, bool>> conditions = null,
+        CancellationToken cancellationToken = default) where T : EntityBase, new()
         {
             var collection = _db.GetCollection<T>(typeof(T).Name);
             if (conditions != null)
             {
-                return await collection.Find(conditions).ToListAsync();
+                return await collection.Find(conditions).ToListAsync(cancellationToken);
             }
-            return await collection.Find(_ => true).ToListAsync();
+            return await collection.Find(_ => true).ToListAsync(cancellationToken);
         }
         #endregion
         #region DELETE
@@ -414,10 +450,11 @@ namespace Xuesky.Common.Mongo
         /// 删除单条数据
         /// </summary>
         /// <param name="id">id</param>
-        public async Task<bool> DeleteOneAsync<T>(string id) where T : EntityBase, new()
+        public async Task<bool> DeleteOneAsync<T>(string id,
+        CancellationToken cancellationToken = default) where T : EntityBase, new()
         {
             var collection = _db.GetCollection<T>(typeof(T).Name);
-            var result = await collection.DeleteOneAsync(o => o.Id == id);
+            var result = await collection.DeleteOneAsync(o => o.Id == id,cancellationToken);
             return result.DeletedCount > 0;
         }
         ///<summary>
@@ -434,10 +471,11 @@ namespace Xuesky.Common.Mongo
         /// 删除多条数据
         /// </summary>
         /// <param name="filter">过滤条件</param>
-        public async Task<long> DeleteBatchAsync<T>(Expression<Func<T, bool>> filter) where T : EntityBase, new()
+        public async Task<long> DeleteBatchAsync<T>(Expression<Func<T, bool>> filter,
+        CancellationToken cancellationToken = default) where T : EntityBase, new()
         {
             var collection = _db.GetCollection<T>(typeof(T).Name);
-            var result = await collection.DeleteManyAsync(filter);
+            var result = await collection.DeleteManyAsync(filter,cancellationToken);
             return result.DeletedCount;
         }
         #endregion
@@ -458,7 +496,7 @@ namespace Xuesky.Common.Mongo
             var result = collection.ReplaceOne(o => o.Id == id, entity);
             return result.ModifiedCount > 0;
         }
-                ///<summary>
+        ///<summary>
         /// 根据主键替换数据
         /// </summary>
         /// <param name="id"></param>
@@ -467,11 +505,12 @@ namespace Xuesky.Common.Mongo
         /// <exception cref="MemberAccessException"></exception>
         /// <exception cref="System.Reflection.TargetInvocationException"></exception>
         /// <exception cref="TypeLoadException"></exception>
-        public async Task<bool> ReplaceOneAsync<T>(string id, T entity) where T : EntityBase, new()
+        public async Task<bool> ReplaceOneAsync<T>(string id, T entity,
+        CancellationToken cancellationToken = default) where T : EntityBase, new()
         {
             IMongoCollection<T> collection = _db.GetCollection<T>(typeof(T).Name);
 
-            var result = await collection.ReplaceOneAsync(o => o.Id == id, entity);
+            var result = await collection.ReplaceOneAsync(o => o.Id == id, entity,cancellationToken:cancellationToken);
             return result.ModifiedCount > 0;
         }
         #endregion
@@ -532,7 +571,7 @@ namespace Xuesky.Common.Mongo
         /// </summary>
         /// <typeparam name="T">需要创建索引的实体类型</typeparam>
         /// <exception cref="Exception"></exception>
-        public async Task<bool> CreateIndexAsync<T>() where T : EntityBase, new()
+        public async Task<bool> CreateIndexAsync<T>(CancellationToken cancellationToken = default) where T : EntityBase, new()
         {
             if (this._db == null)
             {
@@ -567,7 +606,7 @@ namespace Xuesky.Common.Mongo
                             }
                             CreateIndexModel<BsonDocument> indexModel = new CreateIndexModel<BsonDocument>(indexKey);
                             //创建该索引
-                            await mc.Indexes.CreateOneAsync(indexModel);
+                            await mc.Indexes.CreateOneAsync(indexModel,cancellationToken: cancellationToken);
                         }
                     }
                 }
